@@ -4,7 +4,8 @@ use notify::{FsEventWatcher, RecursiveMode};
 use tokio::sync::watch;
 use tokio_stream::Stream;
 
-use crate::{FromReader, PathTo};
+use crate::fs::PathTo;
+use crate::traits::FromReader;
 
 /// An adapter for reloading a filesystem document when it's changed
 #[derive(Clone)]
