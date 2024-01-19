@@ -16,7 +16,6 @@ tokio-stream = { version = "0.1.14", features = ["full"] }
 toml = "0.8.8"
 tracing = "0.1.40"
 
-
 [dev-dependencies]
 anyhow = "1.0.75"
 tempfile = "3.8.1"

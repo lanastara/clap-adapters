@@ -14,7 +14,7 @@ impl<T: DeserializeOwned> FromReader for YamlOf<T> {
 }
 
 impl<T> crate::fs::PathTo<YamlOf<T>> {
-    /// Returns reference to the inner YAML datatype
+    /// Returns reference to the inner Yaml datatype
     ///
     /// # Example
     ///
@@ -40,14 +40,51 @@ impl<T> crate::fs::PathTo<YamlOf<T>> {
     ///
     /// // Parse our CLI, passing our config file path to --config
     /// let cli = Cli::parse_from(["app", "--config", &config_path_string]);
-    /// let yaml = serde_yaml::to_string(cli.config.yaml())?;
+    /// let data = cli.config.data();
     ///
     /// // We should expect the value we get to match what we wrote to the config
-    /// assert_eq!(&yaml, "hello: world\n");
+    /// assert_eq!(data, &serde_json::json!({"hello":"world"}));
     /// # Ok(())
     /// # }
     /// ```
-    pub fn yaml(&self) -> &T {
+    pub fn data(&self) -> &T {
         &self.data.0
+    }
+
+    /// Returns the owned inner datatype parsed from Yaml
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # fn main() -> anyhow::Result<()> {
+    /// use clap::Parser;
+    /// use clap_adapters::prelude::*;
+    ///
+    /// #[derive(Debug, Parser)]
+    /// struct Cli {
+    ///     #[clap(long)]
+    ///     config: PathTo<YamlOf<serde_json::Value>>,
+    /// }
+    ///
+    /// // Create a config file in a temporary directory
+    /// let config_dir = tempfile::tempdir()?;
+    /// let config_path = config_dir.path().join("config.json");
+    /// let config_path_string = config_path.display().to_string();
+    ///
+    /// // Write a test config to the config file
+    /// let config_string = r#"hello: "world""#;
+    /// std::fs::write(&config_path, &config_string)?;
+    ///
+    /// // Parse our CLI, passing our config file path to --config
+    /// let cli = Cli::parse_from(["app", "--config", &config_path_string]);
+    /// let data = cli.config.into_data();
+    ///
+    /// // We should expect the value we get to match what we wrote to the config
+    /// assert_eq!(data, serde_json::json!({"hello":"world"}));
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn into_data(self) -> T {
+        self.data.0
     }
 }
