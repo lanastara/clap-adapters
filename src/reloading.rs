@@ -7,7 +7,33 @@ use tokio_stream::Stream;
 use crate::fs::PathTo;
 use crate::traits::FromReader;
 
-/// An adapter for reloading a filesystem document when it's changed
+/// Provides a file watching handle for a given [`Path`]
+///
+/// - Use [`Reloading::get`] to get the file contents at a given moment
+/// - Use [`Reloading::receiver`] to get a tokio [`watch::Receiver`]
+///
+/// # Example
+///
+/// ```
+/// # fn example() {
+/// use clap::Parser;
+/// use clap_adapters::prelude::*;
+///
+/// #[derive(Debug, Parser)]
+/// struct Cli {
+///     /// Path to a Json config that's reloaded
+///     #[clap(long)]
+///     config: Reloading<PathTo<JsonOf<serde_json::Value>>>,
+/// }
+///
+/// let cli = Cli::parse_from(["app", "--config=./config.json"]);
+/// let current_config = cli.config.get();
+/// let config_rx = cli.config.receiver();
+/// # }
+/// ```
+///
+/// [`Path`]: std::path::Path
+/// [`watch::Receiver`]: tokio::sync::watch
 #[derive(Clone)]
 #[must_use = "Dropping the `Reloading` will cancel the file watch"]
 pub struct Reloading<T> {

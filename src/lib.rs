@@ -49,8 +49,11 @@ mod fs;
 /// Adapters for parsing JSON documents
 mod json;
 
-/// Adapters for auto-reloading file contents on change
-mod reload;
+/// Adapter for auto-reloading file contents on change
+mod reloading;
+
+/// Adapter for reloading file contents periodically
+mod periodic;
 
 /// Adapters for parsing TOML documents
 mod toml;
@@ -61,13 +64,16 @@ pub mod traits;
 /// Adapters for parsing YAML documents
 mod yaml;
 
-pub use {fs::PathTo, json::JsonOf, reload::Reloading, toml::TomlOf, yaml::YamlOf};
+pub use {
+    fs::PathTo, json::JsonOf, periodic::Periodic, reloading::Reloading, toml::TomlOf, yaml::YamlOf,
+};
 
 /// Convenience import for clap adapter building blocks
 pub mod prelude {
     pub use crate::fs::*;
     pub use crate::json::*;
-    pub use crate::reload::*;
+    pub use crate::periodic::*;
+    pub use crate::reloading::*;
     pub use crate::toml::*;
     pub use crate::traits::*;
     pub use crate::yaml::*;
