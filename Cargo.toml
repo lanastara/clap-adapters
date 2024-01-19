@@ -2,10 +2,19 @@
 name = "clap-adapters"
 version = "0.1.0"
 edition = "2021"
+repository = "https://github.com/nicholastmosher/clap-adapters"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+description = "Neat adapters for parsing config files with clap"
 
 [features]
 default = []
 tokio = []
+
+[[example]]
+name = "reloading"
+path = "examples/reloading.rs"
+required-features = ["tokio"]
 
 [dependencies]
 anyhow = "1.0.75"

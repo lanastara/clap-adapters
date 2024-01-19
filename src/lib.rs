@@ -50,9 +50,11 @@ mod fs;
 mod json;
 
 /// Adapter for auto-reloading file contents on change
+#[cfg(feature = "tokio")]
 mod reloading;
 
 /// Adapter for reloading file contents periodically
+#[cfg(feature = "tokio")]
 mod periodic;
 
 /// Adapters for parsing TOML documents
@@ -64,15 +66,17 @@ pub mod traits;
 /// Adapters for parsing YAML documents
 mod yaml;
 
-pub use {
-    fs::PathTo, json::JsonOf, periodic::Periodic, reloading::Reloading, toml::TomlOf, yaml::YamlOf,
-};
+pub use {fs::PathTo, json::JsonOf, toml::TomlOf, yaml::YamlOf};
+#[cfg(feature = "tokio")]
+pub use {periodic::Periodic, reloading::Reloading};
 
 /// Convenience import for clap adapter building blocks
 pub mod prelude {
     pub use crate::fs::*;
     pub use crate::json::*;
+    #[cfg(feature = "tokio")]
     pub use crate::periodic::*;
+    #[cfg(feature = "tokio")]
     pub use crate::reloading::*;
     pub use crate::toml::*;
     pub use crate::traits::*;
