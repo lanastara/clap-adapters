@@ -46,9 +46,6 @@
 /// Adapters for reading file contents from CLI paths
 mod fs;
 
-/// Adapters for reading http resources from CLI urls
-pub mod http;
-
 /// Adapters for parsing JSON documents
 mod json;
 
@@ -69,7 +66,6 @@ pub use {fs::PathTo, json::JsonOf, reload::Reloading, toml::TomlOf, yaml::YamlOf
 /// Convenience import for clap adapter building blocks
 pub mod prelude {
     pub use crate::fs::*;
-    pub use crate::http::*;
     pub use crate::json::*;
     pub use crate::reload::*;
     pub use crate::toml::*;
