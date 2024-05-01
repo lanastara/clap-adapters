@@ -1,11 +1,26 @@
-//! Adapter types for declaratively loading configurations
+//! Adapter types for declaratively loading configurations via [`clap`]
 //!
-//! Did you know that any type that implements [`FromStr`] can
-//! be used in a [`clap`] derive struct? That means that any
-//! logic you can fit into a `fn(&str) -> Result<T, Error>` can
-//! be run at parsing-time. This can be expecially useful for
-//! declaratively selecting config files or doing other cool
-//! stuff. Check this out:
+//! Types which implement [`FromStr`] may be used in a [`clap`] derive
+//! struct. This crate provides adapters which accept [`Path`]-like inputs
+//! as arguments from the user and automatically loads and parses the file
+//! at the path.
+//!
+//! The base adapter is `PathTo<T>`, which takes a path from the user and
+//! attempts to load the contents of the file into an instance of `T`, which
+//! must implement [`FromReader`]. This crate implements `FromReader` for
+//! the following types:
+//!
+//! - `Vec<u8>`
+//! - `String`
+//! - `JsonOf<T>` (where `T: serde::DeserializeOwned`)
+//! - `TomlOf<T>` (where `T: serde::DeserializeOwned`)
+//! - `YamlOf<T>` (where `T: serde::DeserializeOwned`)
+//!
+//! Additionally, `PathTo` may be wrapped in either `Periodic<T>` or `Reloading<T>`
+//! to gain the ability to automatically _reload_ the file at the user-given path
+//! at a regular interval or when the file is updated, respectively.
+//!
+//! # Example
 //!
 //! ```
 //! # fn main() -> anyhow::Result<()> {
@@ -39,7 +54,9 @@
 //! # }
 //! ```
 //!
+//! [`Path`]: std::path
 //! [`FromStr`]: std::str::FromStr
+//! [`FromReader`]: crate::traits::FromReader
 
 #![warn(missing_docs)]
 
@@ -49,10 +66,10 @@ mod fs;
 /// Adapters for parsing JSON documents
 mod json;
 
-/// Adapter for reloading file contents periodically
 #[cfg(any(doc, feature = "periodic"))]
 mod periodic;
 
+/// Adapter for auto-reloading file contents on change
 #[cfg(any(doc, feature = "reloading"))]
 mod reloading;
 
