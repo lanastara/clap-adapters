@@ -1,6 +1,6 @@
 [package]
 name = "clap-adapters"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 repository = "https://github.com/nicholastmosher/clap-adapters"
 license = "MIT OR Apache-2.0"
@@ -8,27 +8,31 @@ readme = "README.md"
 description = "Neat adapters for parsing config files with clap"
 
 [features]
-default = []
-tokio = []
+default = ["full"]
+full = ["reloading", "periodic"]
+reloading = ["tokio/rt", "tokio-stream", "notify"]
+periodic = ["tokio", "tokio-stream"]
 
 [[example]]
 name = "reloading"
 path = "examples/reloading.rs"
-required-features = ["tokio"]
+required-features = ["reloading", "tokio/full"]
 
 [dependencies]
 anyhow = "1.0.75"
 clap = { version = "4.4.11", features = ["derive", "env"] }
-notify = "6.1.1"
-reqwest = { version = "0.11.22", features = ["blocking"] }
 serde = { version = "1.0.193", features = ["derive"] }
 serde_json = "1.0.108"
 serde_yaml = "0.9.27"
-tokio = { version = "1.34.0", features = ["full"] }
-tokio-stream = { version = "0.1.14", features = ["full"] }
 toml = "0.8.8"
 tracing = "0.1.40"
+
+# Optional dependencies
+notify = { version = "6.1.1", optional = true }
+tokio = { version = "1.34.0", features = ["sync"], optional = true }
+tokio-stream = { version = "0.1.14", features = ["sync"], optional = true }
 
 [dev-dependencies]
 anyhow = "1.0.75"
 tempfile = "3.8.1"
+tokio = { version = "1", features = ["full"] }

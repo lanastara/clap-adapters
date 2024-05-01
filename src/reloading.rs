@@ -1,3 +1,5 @@
+//! Provides the [`Reloading`] adapter for reloading files after fs notifications
+
 use std::sync::Arc;
 
 use notify::{FsEventWatcher, RecursiveMode};
@@ -7,7 +9,8 @@ use tokio_stream::Stream;
 use crate::fs::PathTo;
 use crate::traits::FromReader;
 
-/// Provides a file watching handle for a given [`Path`]
+/// Given a [`Path`] from the user, provides a utility that reloads the file
+/// at the path whenever the file is updated
 ///
 /// - Use [`Reloading::get`] to get the file contents at a given moment
 /// - Use [`Reloading::receiver`] to get a tokio [`watch::Receiver`]
@@ -32,8 +35,12 @@ use crate::traits::FromReader;
 /// # }
 /// ```
 ///
+/// > **Note**: [`Reloading`] is powered by [`notify`], which has some
+/// [known problems], so check out the caveats if you run into trouble
+///
 /// [`Path`]: std::path::Path
 /// [`watch::Receiver`]: tokio::sync::watch
+/// [known problems]: https://docs.rs/notify/latest/notify/#known-problems
 #[derive(Clone)]
 #[must_use = "Dropping the `Reloading` will cancel the file watch"]
 pub struct Reloading<T> {

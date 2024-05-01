@@ -1,3 +1,5 @@
+//! Provides the [`Periodic`] adapter for loading files at a regular interval
+
 use std::time::Duration;
 
 use tokio::sync::watch;
@@ -5,15 +7,15 @@ use tokio_stream::Stream;
 
 use crate::{prelude::FromReader, PathTo};
 
-/// Provides a file watching handle for a given [`Path`]
+/// Given a [`Path`] from the user, provides a utility that reloads the file
+/// at the path at a fixed interval
 ///
 /// - Use [`Periodic::get`] to get the file contents at a given moment
 /// - Use [`Periodic::receiver`] to get a tokio [`watch::Receiver`]
 ///
 /// # Example
 ///
-/// ```
-/// # fn example() {
+/// ```no_run
 /// use clap::Parser;
 /// use clap_adapters::prelude::*;
 ///
@@ -32,22 +34,27 @@ use crate::{prelude::FromReader, PathTo};
 ///     secondly_config: Periodic<PathTo<TomlOf<serde_json::Value>>, Seconds<1>>,
 /// }
 ///
-/// let cli = Cli::parse_from([
-///     "app",
-///     "--daily_config=./daily_config.json",
-///     "--minutely-config=./minutely_config.yaml",
-///     "--secondly-config=./secondly_config.toml",
-/// ]);
-///
-/// let current_config = cli.daily_config.get();
-/// let current_config = cli.minutely_config.get();
-/// let current_config = cli.secondly_config.get();
-///
-/// let daily_config_rx = cli.daily_config.receiver();
-/// let minutely_config_rx = cli.minutely_config.receiver();
-/// let secondly_config_rx = cli.secondly_config.receiver();
-/// # }
+/// #[tokio::main]
+/// async fn main() {
+///     let cli = Cli::parse_from([
+///         "app",
+///         "--daily_config=./daily_config.json",
+///         "--minutely-config=./minutely_config.yaml",
+///         "--secondly-config=./secondly_config.toml",
+///     ]);
+///    
+///     let current_config = cli.daily_config.get();
+///     let current_config = cli.minutely_config.get();
+///     let current_config = cli.secondly_config.get();
+///    
+///     let daily_config_rx = cli.daily_config.receiver();
+///     let minutely_config_rx = cli.minutely_config.receiver();
+///     let secondly_config_rx = cli.secondly_config.receiver();
+/// }
 /// ```
+///
+/// > *Note*: [`Periodic`] requires a tokio runtime to be active before calling
+/// > any of the `clap::Parser` functions
 ///
 /// [`Path`]: std::path::Path
 /// [`watch::Receiver`]: tokio::sync::watch
